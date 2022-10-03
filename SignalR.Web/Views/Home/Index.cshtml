@@ -11,26 +11,37 @@
         $(document).ready(() => {
             //configureLogging(signalR.LogLevel.Information)
             var connection = new signalR.HubConnectionBuilder().withAutomaticReconnect([1000, 3000, 3000, 2000]).withUrl("https://localhost:5001/MyHub").build();
+            statusShow();
+            Start();
 
-            $("#conStatus").text(connection.connectionState);
+            //functions
 
-            connection.start().then(() => {
+            function Start(){
+                connection.start().then(() => {
+                    statusShow();
+                    $("#loading").hide();
+
+                }).catch((err) => { console.log(err);
+                setTimeout() => Start(),2000)
+                });
+            }
+
+            function statusShow() {
                 $("#conStatus").text(connection.connectionState);
-                $("#loading").hide();
+            }
 
-            }).catch((err) => { console.log(err) });
-            $("#conStatus").text(connection.connectionState);
+        
+            statusShow();
 
             connection.onreconnecting(err => {
                 $("#loading").show();
-                $("#conStatus").text(connection.connectionState);
-                console.log("onreconnection:" + err);
+                statusShow();
 
             });
 
             connection.onreconnected(connectionId => {
                 $("#loading").hide();
-                $("#conStatus").text(connection.connectionState);
+                statusShow();
                 console.log("connectionId:" + connectionId)
 
             })
@@ -38,7 +49,8 @@
             connection.onclose(() => {
 
                 $("#loading").hide();
-                $("#conStatus").text(connection.connectionState);
+                statusShow();
+                Start();
 
             })
 
