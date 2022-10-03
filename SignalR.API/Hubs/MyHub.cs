@@ -7,12 +7,15 @@ namespace SignalR.API.Hubs
 {
     public class MyHub : Hub
     {
-        private static int ClientCount { get; set; } = 0;
         private static List<string> Names { get; set; } = new List<string>();
-        public async Task SendMessage(string message)
-        {
-            await Clients.All.SendAsync("ReceiveMessage", message);
 
+        private static int ClientCount { get; set; } = 0;
+
+        public async Task SendName(string name)
+        {
+            Names.Add(name);
+
+            await Clients.All.SendAsync("ReceiveName", name);
         }
 
         public async Task GetNames()
@@ -20,10 +23,11 @@ namespace SignalR.API.Hubs
             await Clients.All.SendAsync("ReceiveNames", Names);
         }
 
-        public override async Task OnConnectedAsync()
+        public async override Task OnConnectedAsync()
         {
             ClientCount++;
             await Clients.All.SendAsync("ReceiveClientCount", ClientCount);
+
             await base.OnConnectedAsync();
         }
 
@@ -31,6 +35,7 @@ namespace SignalR.API.Hubs
         {
             ClientCount--;
             await Clients.All.SendAsync("ReceiveClientCount", ClientCount);
+
             await base.OnDisconnectedAsync(exception);
         }
     }

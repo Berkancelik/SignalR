@@ -11,71 +11,77 @@
         $(document).ready(() => {
             //configureLogging(signalR.LogLevel.Information)
             var connection = new signalR.HubConnectionBuilder().withAutomaticReconnect([1000, 3000, 3000, 2000]).withUrl("https://localhost:5001/MyHub").build();
+
             statusShow();
-            Start();
+            start();
+            //Functions
+            function statusShow() {
+                $("#conStatus").text(connection.connectionState);
+            }
 
-            //functions
+            function start() {
 
-            function Start() {
                 connection.start().then(() => {
                     statusShow();
                     $("#loading").hide();
 
                 }).catch((err) => {
                     console.log(err);
-                    setTimeout() => Start(), 2000)
+                    setTimeout(() => start(), 2000)
+                });
+
+            }
+
+            statusShow();
+            //Subscribes
+            connection.onreconnecting(err => {
+                $("#loading").show();
+                statusShow();
+
             });
-                    }
 
-        function statusShow() {
-            $("#conStatus").text(connection.connectionState);
-        }
+            connection.onreconnected(connectionId => {
+                $("#loading").hide();
+                statusShow();
+                console.log("connectionId:" + connectionId)
 
+            })
 
-        statusShow();
+            connection.onclose(() => {
 
-        //subscribes
+                $("#loading").hide();
+                statusShow();
+                start();
 
+            })
 
-        connection.onreconnecting(err => {
-            $("#loading").show();
-            statusShow();
+            connection.on("ReceiveClientCount", (clientCount) => {
 
-        });
+                console.log(clientCount);
+                $("#clientCount").text(clientCount);
 
-        connection.onreconnected(connectionId => {
-            $("#loading").hide();
-            statusShow();
-            console.log("connectionId:" + connectionId)
+            })
 
-        })
+            connection.on("Notify", (countText) => {
 
-        connection.onclose(() => {
+                $("#notify").html(`<div class="alert alert-success">${countText} </div>`)
 
-            $("#loading").hide();
-            statusShow();
-            Start();
+            })
 
-        })
-        connection.on("ReceiveClientCount", (clientCount)=>{
-            console.log(clientCount)
-            $("#clientCount").text(clientCount);
-        })
+            //Clicks
+            $("#btnNameSave").click(() => {
 
-        //Clicks
-        $("#btnNameSave").click(() => {
+                connection.invoke("SendName", $("#txtName").val()).catch((err) => console.log(err))
 
-            connection.invoke("SendName", $("#txtName").val()).catch((err) => console.log(err))
+            })
+            /// on methods
+            connection.on("ReceiveName", (name) => {
 
-        })
-        /// on methods
-        connection.on("ReceiveName", (name) => {
+                $("#namesList").append(`<li class="list-group-item"> ${name}</li>`)
 
-            $("#namesList").append(`<li class="list-group-item"> ${name}</li>`)
+            })
 
         })
-
-                })
     </script>
 
 }
@@ -88,7 +94,7 @@
             <div class="alert alert-info">
                 <div class="float-left">
                     Bağlantı Durumu:<strong id="conStatus"></strong>
-                    ,Client Sayısı:<strong id="clientCount"></strong>
+                    ,Client Saysı:<strong id="clientCount"></strong>
                 </div>
                 <div class="float-right">
                     <div id="loading" class="spinner-border" role="status">
@@ -97,6 +103,8 @@
                 </div>
                 <div class="clearfix"></div>
             </div>
+
+            <div id="notify"></div>
         </div>
         <div class="col-md-8 offset-2">
             <ul class="list-group" id="namesList"></ul>
