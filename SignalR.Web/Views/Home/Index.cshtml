@@ -25,6 +25,11 @@
                     statusShow();
                     $("#loading").hide();
 
+
+                    connection.invoke("GetNames")
+
+
+
                 }).catch((err) => {
                     console.log(err);
                     setTimeout(() => start(), 2000)
@@ -70,6 +75,14 @@
 
             connection.on("Error",(errorText) =>{
                 alert(errorText);
+            })
+
+            connection.on("ReceiveNames",(name)=>{
+                $("#namesList").empty();
+                //item and index get
+                names.forEach((item,index)=>{
+                    $("#nameList").append(`<li class="list-group-item">${item} </li>`)
+                })
             })
 
             //Clicks
