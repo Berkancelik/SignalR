@@ -43,7 +43,7 @@
             connection.onreconnected(connectionId => {
                 $("#loading").hide();
                 statusShow();
-                console.log("connectionId:" + connectionId)
+                console.log("connectionId:" + connectionId)  
 
             })
 
@@ -66,6 +66,10 @@
 
                 $("#notify").html(`<div class="alert alert-success">${countText} </div>`)
 
+            })
+
+            connection.on("Error",(errorText) =>{
+                alert(errorText);
             })
 
             //Clicks
