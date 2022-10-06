@@ -10,8 +10,8 @@ using SignalR.API.Models;
 namespace SignalR.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221006075820_Initial")]
-    partial class Initial
+    [Migration("20221006080717_migrationName")]
+    partial class migrationName
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,8 +28,8 @@ namespace SignalR.API.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Name")
-                        .HasColumnType("int");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
