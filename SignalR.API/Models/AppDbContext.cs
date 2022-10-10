@@ -13,6 +13,6 @@ namespace SignalR.API.Models
 
         }
         public DbSet<Team> Teams { get; set; }
-        public DbSet<User> USers { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
