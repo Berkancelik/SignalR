@@ -103,7 +103,7 @@
                 })
                 connection.on("ReceiveNamesByGroup", (teams) => {
                     teams.forEach((teams, index) => {
-                        if (teams=="Team A") {
+                        if (teams == "Team A") {
                             let listName
 
                             if (team.teamId == 1)
@@ -118,36 +118,48 @@
                     })
                 }
 
-                //Clicks
-                $("#btnNameSave").click(() => {
-
-                    connection.invoke("SendName", $("#txtName").val()).catch((err) => console.log(err))
-
-                })
-                $("btnNameTeam").click(() => {
-                    let name = $("txtName").val();
-                    let teamName = $("input[type=radio]:checked").val();
-                    if (teamName == null) {
-                        alert("Takkım seçiniz");
-                        return
-                    }
+                        //Clicks
+            $("#btnProduct").click(() => {
+                let prodcut = {"Id":1, "Name": "Kalem", "Price": 100, "Stock": 200
+                };
+                connection.invoke("SendProduct", prodcut)
 
 
-                    connection.invoke("SendNameByGroup", name, teamName).catch((err) => {
-                        console.log(err);
-                    });
-                })
-                $("input[type=radio]").change(() => {
-                    let value = $(`input[type=radio]:checked`).val();
-                    if (value == "Team A") {
-                        connection.invoke("AddToGroup", value);
-                        connection.invoke("RemoveToGroup", "Team B");
-                    }
-                    else {
-                        connection.invoke("AddToGroup", value);
-                        connection.invoke("RemoveToGroup", "Team A");
-                    }
-                })
+            })
+
+
+            $("#btnNameSave").click(() => {
+
+                connection.invoke("SendName", $("#txtName").val()).catch((err) => console.log(err))
+
+            })
+            $("btnNameTeam").click(() => {
+                let name = $("txtName").val();
+                let teamName = $("input[type=radio]:checked").val();
+                if (teamName == null) {
+                    alert("Takkım seçiniz");
+                    return
+                }
+
+
+                connection.invoke("SendNameByGroup", name, teamName).catch((err) => {
+                    console.log(err);
+                });
+            })
+            $("input[type=radio]").change(() => {
+                let value = $(`input[type=radio]:checked`).val();
+                if (value == "Team A") {
+                    connection.invoke("AddToGroup", value);
+                    connection.invoke("RemoveToGroup", "Team B");
+                }
+                else {
+                    connection.invoke("AddToGroup", value);
+                    connection.invoke("RemoveToGroup", "Team A");
+                }
+            })
+        })
+            connection.on("ReceiveProduct", (product) => {
+                console.log(product);
             })
     </script>
 
@@ -159,6 +171,7 @@
         <hr />
         <button class="btn btn-primary" id="btnNameSave">İsim Kaydet</button>
         <button class="btn btn-warning" id="btnNameTeam">isim Kaydet(Team)</button>
+        <button class="btn btn-error" id="btnProduct">Ürün Kaydet</button>
         <div class="alert alert-info mt-2">
             <div class="float-left">
                 Bağlantı Durumu:<strong id="conStatus"></strong>
